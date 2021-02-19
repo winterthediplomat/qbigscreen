@@ -5,9 +5,10 @@
 #include "bigscreen_defines.hpp"
 #include "bigscreennetwork.h"
 
+#include "bigscreencontroller.h"
+
 #include <QListWidgetItem>
 #include <QProcess>
-#include <QtGamepad/QGamepad>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,22 +27,16 @@ private slots:
     void on_pb_tv_clicked();
     void on_pb_apps_clicked();
     void on_pb_youtube_clicked();
-    void twitchListRetrieved(Result<QStringList, QString>& list);
 
     void itemClicked(QListWidgetItem *item);
 
-    void processStarted();
-    void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void joypadUpDown(double value);
-    void buttonXChanged(bool pressed);
+    void modelUpdated(BigScreenModel& model);
 private:
     Ui::MainWindow *ui;
     BigScreenNetwork net;
-    QProcess proc;
 
     BigScreenTab currentTab;
-
-    QGamepad* pad;
+    BigScreenController controller;
 
     void markAsSelected(BigScreenTab tab);
 
