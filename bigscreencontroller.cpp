@@ -39,6 +39,7 @@ void BigScreenController::updateStatusBarText(QString text) {
 }
 
 
+
 void BigScreenController::joypadLeftRight(double value)
 {
     if(value == -1) {
@@ -177,9 +178,7 @@ void BigScreenController::btnX() {
     case TabSelection:
         updated = true;
         if(!model.selectedTab.isNone()) {
-            // invoke the right stuff
-            model.debugText.append("requested twitch channels");
-            this->net.requestTwitchWebsites();
+            this->executeTab(model.selectedTab.value());
         }
         break;
     case ListItemSelection:
@@ -202,6 +201,35 @@ void BigScreenController::btnX() {
         emit this->modelUpdated(this->model);
     }
 
+}
+
+void BigScreenController::tabClicked(BigScreenTab tab)
+{
+    if(internal.state == TabSelection) {
+        model.selectedTab = Option<BigScreenTab>::Some(tab);
+        this->executeTab(tab);
+    }
+}
+
+void BigScreenController::listItemClicked(size_t row)
+{
+    model.selectedListItem = Option<int>::Some(row);
+    this->btnX();
+}
+
+void BigScreenController::executeTab(BigScreenTab tab)
+{
+    switch(tab) {
+    case Youtube:
+    case Television:
+    case Applications:
+        this->updateStatusBarText("not supported");
+        break;
+    case Twitch:
+        model.debugText.append("requested twitch channels");
+        this->net.requestTwitchWebsites();
+        break;
+    }
 }
 
 void BigScreenController::startTwitchStream() {

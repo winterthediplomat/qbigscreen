@@ -64,21 +64,22 @@ void MainWindow::markAsSelected(BigScreenTab tab) {
 
 // slots
 void MainWindow::on_pb_twitch_clicked() {
-    this->markAsSelected(Twitch);
+    this->controller.tabClicked(Twitch);
 }
 void MainWindow::on_pb_apps_clicked() {
-    this->markAsSelected(Applications);
+    this->controller.tabClicked(Twitch);
 }
 void MainWindow::on_pb_tv_clicked() {
-    this->markAsSelected(Television);
+    this->controller.tabClicked(Twitch);
 }
 void MainWindow::on_pb_youtube_clicked() {
-    this->markAsSelected(Youtube);
+    this->controller.tabClicked(Twitch);
 }
 
-void MainWindow::itemClicked(QListWidgetItem* item)
+void MainWindow::itemClicked(QListWidgetItem*)
 {
-    // TODO(wha): add mouse support
+    auto row = this->ui->lst_stuff->currentRow();
+    this->controller.listItemClicked(row);
 }
 
 void MainWindow::modelUpdated(BigScreenModel& model) {

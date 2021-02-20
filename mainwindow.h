@@ -28,7 +28,7 @@ private slots:
     void on_pb_apps_clicked();
     void on_pb_youtube_clicked();
 
-    void itemClicked(QListWidgetItem *item);
+    void itemClicked(QListWidgetItem *);
 
     void modelUpdated(BigScreenModel& model);
 private:

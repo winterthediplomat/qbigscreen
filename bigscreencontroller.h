@@ -22,7 +22,8 @@ public slots:
 
     void btnX();
 
-    // TODO(wha): add slots for mouse support
+    void tabClicked(BigScreenTab tab);
+    void listItemClicked(size_t row);
 
 signals:
     void modelUpdated(BigScreenModel& model);
@@ -46,8 +47,13 @@ private:
 
     QProcess livestreamer;
 
+    // graphical support
     void updateStatusBarText(QString text);
 
+    // mouse support
+    void executeTab(BigScreenTab tab);
+
+    // process
     void startTwitchStream();
 
 private slots:
