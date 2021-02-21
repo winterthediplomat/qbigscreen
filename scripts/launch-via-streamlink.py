@@ -23,7 +23,7 @@ def start_qjoypad_with_profile(profile):
         gone, alive = psutil.wait_procs([maybe_p], timeout=3, callback=unused_callback)
         if maybe_p in alive:
             maybe_p.kill()
-    qjoypad_p = subprocess.Popen("qjoypad {}".format(profile))
+    qjoypad_p = subprocess.Popen("qjoypad {}".format(profile).split(" "))
 
 def main(args):
     s = streamlink.Streamlink()
