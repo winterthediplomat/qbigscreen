@@ -16,6 +16,7 @@ public:
     QStringList items;
     QString statusBarText;
     bool showFullScreen;
+    bool freezeInterface;
 };
 
 #endif // BIGSCREENMODEL_H

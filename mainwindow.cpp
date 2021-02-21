@@ -120,4 +120,11 @@ void MainWindow::modelUpdated(BigScreenModel& model) {
     else {
         this->showNormal();
     }
+
+    // freeze interface if requested
+    this->ui->pb_apps->setEnabled(!model.freezeInterface);
+    this->ui->pb_tv->setEnabled(!model.freezeInterface);
+    this->ui->pb_twitch->setEnabled(!model.freezeInterface);
+    this->ui->pb_youtube->setEnabled(!model.freezeInterface);
+    this->ui->lst_stuff->setEnabled(!model.freezeInterface);
 }

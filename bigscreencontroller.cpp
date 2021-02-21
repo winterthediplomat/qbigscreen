@@ -11,6 +11,7 @@ BigScreenController::BigScreenController(QObject *parent) : QObject(parent)
 
 void BigScreenController::initialize() {
     model.showFullScreen = true;
+    model.freezeInterface = false;
 
     auto gamepads = QGamepadManager::instance()->connectedGamepads();
     if(!gamepads.empty()) {
@@ -263,6 +264,7 @@ void BigScreenController::startTwitchStream() {
     model.statusBarText = "starting: " + program + " " + args.join(" ");
     model.debugText.append("\nstarting: " + program + " " + args.join(" "));
     model.showFullScreen = false;
+    model.freezeInterface = true;
 
     livestreamer.start(program, args);
 }
@@ -279,6 +281,7 @@ void BigScreenController::processFinished(int exitCode, QProcess::ExitStatus exi
 
     internal.state = ListItemSelection;
     model.showFullScreen = true;
+    model.freezeInterface = false;
     if(exitStatus == QProcess::CrashExit) {
         this->updateStatusBarText("[twitch] the stream is not active");
     }
