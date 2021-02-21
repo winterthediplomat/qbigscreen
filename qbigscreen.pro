@@ -30,3 +30,10 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = $$[PREFIX]
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    dev-support/install-scripts.sh \
+    scripts/launch-via-streamlink.py \
+    scripts/start-mpv.sh
+
+RESOURCES +=

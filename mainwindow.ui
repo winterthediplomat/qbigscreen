@@ -87,7 +87,11 @@
       </layout>
      </item>
      <item>
-      <widget class="QPlainTextEdit" name="pte_debug"/>
+      <widget class="QPlainTextEdit" name="pte_debug">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QListWidget" name="lst_stuff">
@@ -108,7 +112,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

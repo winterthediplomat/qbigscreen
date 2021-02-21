@@ -112,4 +112,12 @@ void MainWindow::modelUpdated(BigScreenModel& model) {
     // update debug view
     this->ui->pte_debug->clear();
     this->ui->pte_debug->appendPlainText(model.debugText);
+
+    // fullscreen
+    if(model.showFullScreen) {
+        this->showMaximized();
+    }
+    else {
+        this->showNormal();
+    }
 }

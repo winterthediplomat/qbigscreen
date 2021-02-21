@@ -15,6 +15,7 @@ public:
     Option<int> selectedListItem;
     QStringList items;
     QString statusBarText;
+    bool showFullScreen;
 };
 
 #endif // BIGSCREENMODEL_H

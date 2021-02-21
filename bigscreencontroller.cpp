@@ -1,5 +1,8 @@
 #include "bigscreencontroller.h"
 #include <QtGamepad/QGamepad>
+// for path checking
+#include <QFile>
+#include <QDir>
 
 BigScreenController::BigScreenController(QObject *parent) : QObject(parent)
 {
@@ -7,6 +10,8 @@ BigScreenController::BigScreenController(QObject *parent) : QObject(parent)
 }
 
 void BigScreenController::initialize() {
+    model.showFullScreen = true;
+
     auto gamepads = QGamepadManager::instance()->connectedGamepads();
     if(!gamepads.empty()) {
         this->updateStatusBarText("gamepad found");
@@ -236,14 +241,28 @@ void BigScreenController::startTwitchStream() {
     auto currentIndex = model.selectedListItem.value();
     auto twitch_username = model.items.at(currentIndex);
 
-    QString program = "streamlink";
+    QString global_version_path = "/opt/qbigscreen/launch-via-streamlink.py";
+    QFile global_version(global_version_path);
+    QString local_version_path = QDir::homePath() + QString("/.config/qbigscreen/scripts/launch-via-streamlink.py");
+    QFile local_version(local_version_path);
+
+    QString program;
+    if(local_version.exists()) {
+        program = local_version_path;
+    }
+    else if(global_version.exists()) {
+        program = global_version_path;
+    }
+    else {
+        assert(false && "how tf did you install this app?");
+    }
     QStringList args;
-    args << "--player";
-    args << "mpv";
     args << "https://twitch.tv/" + twitch_username;
     args << "720p";
 
     model.statusBarText = "starting: " + program + " " + args.join(" ");
+    model.debugText.append("\nstarting: " + program + " " + args.join(" "));
+    model.showFullScreen = false;
 
     livestreamer.start(program, args);
 }
@@ -259,6 +278,7 @@ void BigScreenController::processFinished(int exitCode, QProcess::ExitStatus exi
     // this->ui->pte_debug->appendPlainText("process finished - (" + QString::number(exitCode) + ", status: " + QString::number(exitStatus) + ")");
 
     internal.state = ListItemSelection;
+    model.showFullScreen = true;
     if(exitStatus == QProcess::CrashExit) {
         this->updateStatusBarText("[twitch] the stream is not active");
     }
