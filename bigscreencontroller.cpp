@@ -34,6 +34,8 @@ void BigScreenController::initialize() {
             this, &BigScreenController::twitchListRetrieved);
     connect(&net, &BigScreenNetwork::applicationsRetrieved,
             this, &BigScreenController::applicationsRetrieved);
+    connect(&net, &BigScreenNetwork::tvChannelsRetrieved,
+            this, &BigScreenController::tvChannelsRetrieved);
 
     connect(&livestreamer, &QProcess::started,
             this, &BigScreenController::processStarted);
@@ -199,6 +201,9 @@ void BigScreenController::btnX() {
             case Twitch:
                 this->startTwitchStream();
                 break;
+            case Television:
+                this->startTvChannelStream();
+                break;
             case Applications:
                 this->executeSelectedApplication();
                 break;
@@ -234,8 +239,11 @@ void BigScreenController::executeTab(BigScreenTab tab)
 {
     switch(tab) {
     case Youtube:
-    case Television:
         this->updateStatusBarText("not supported");
+        break;
+    case Television:
+        model.debugText.append("\nrequested tv channels");
+        this->net.requestTvChannels();
         break;
     case Applications:
         model.debugText.append("\nrequested applications");
@@ -264,6 +272,24 @@ void BigScreenController::startTwitchStream() {
 
     livestreamer.start(program, args);
 }
+
+void BigScreenController::startTvChannelStream() {
+    auto currentIndex = model.selectedListItem.value();
+    auto tv_channel_name = model.items.at(currentIndex);
+
+    QString program = this->launcherScriptPath("launch-via-streamlink.py");
+    QStringList args;
+    args << "https://raiplay.it/dirette/" + tv_channel_name;
+    args << "576p";
+
+    model.statusBarText = "starting: " + program + " " + args.join(" ");
+    model.debugText.append("\nstarting: " + program + " " + args.join(" "));
+    model.showFullScreen = false;
+    model.freezeInterface = true;
+
+    livestreamer.start(program, args);
+}
+
 
 void BigScreenController::executeSelectedApplication()
 {
@@ -348,5 +374,14 @@ void BigScreenController::applicationsRetrieved(Result<QVector<ApplicationItem>,
     }
 
     emit modelUpdated(model);
+}
+
+void BigScreenController::tvChannelsRetrieved(Result<QStringList, QString> &channels)
+{
+    model.debugText.append("\ntvChannelRetrieved called");
+    model.items = channels.value();
+    internal.state = ListItemSelection;
+    emit modelUpdated(model);
+
 }
 

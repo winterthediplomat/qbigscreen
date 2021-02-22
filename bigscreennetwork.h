@@ -20,10 +20,12 @@ public:
     BigScreenNetwork();
     void requestTwitchWebsites();
     void requestApplications();
+    void requestTvChannels();
 
 signals:
     void twitchListRetrieved(Result<QStringList, QString>& list);
     void applicationsRetrieved(Result<QVector<ApplicationItem>, QString>& list);
+    void tvChannelsRetrieved(Result<QStringList, QString>& list);
 
 private:
     QNetworkAccessManager qnam;

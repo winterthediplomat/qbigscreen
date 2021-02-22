@@ -28,6 +28,7 @@ public slots:
 signals:
     void modelUpdated(BigScreenModel& model);
 
+protected slots:
 private:
     enum InternalState {
         TabSelection,
@@ -56,6 +57,7 @@ private:
 
     // process
     void startTwitchStream();
+    void startTvChannelStream();
     void executeSelectedApplication();
 
     // process support (dev vs deployed)
@@ -71,7 +73,7 @@ private slots:
 
     void twitchListRetrieved(Result<QStringList, QString>& channels);
     void applicationsRetrieved(Result<QVector<ApplicationItem>, QString>& list);
-
+    void tvChannelsRetrieved(Result<QStringList, QString>& channels);
 };
 
 #endif // BIGSCREENCONTROLLER_H

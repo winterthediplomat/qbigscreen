@@ -32,3 +32,18 @@ void BigScreenNetwork::requestApplications()
 
    emit applicationsRetrieved(res);
 }
+
+void BigScreenNetwork::requestTvChannels()
+{
+    QStringList sl;
+    sl.append("rai1");
+    sl.append("rai2");
+    sl.append("rai3");
+    sl.append("rai4");
+    sl.append("rai5");
+    sl.append("rainews24");
+
+    auto res = Result<QStringList, QString>::Ok(sl);
+
+    emit tvChannelsRetrieved(res);
+}
