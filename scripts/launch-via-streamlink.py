@@ -51,7 +51,7 @@ def main(args):
         quality_to_request).split(" "))
     returncode = p.wait()
 
-    start_qjoypad_with_profile("mouse")
+    start_qjoypad_with_profile(None)
 
     sys.exit(100+returncode)
 
