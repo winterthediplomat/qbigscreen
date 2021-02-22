@@ -32,6 +32,8 @@ void BigScreenController::initialize() {
 
     connect(&net, &BigScreenNetwork::twitchListRetrieved,
             this, &BigScreenController::twitchListRetrieved);
+    connect(&net, &BigScreenNetwork::applicationsRetrieved,
+            this, &BigScreenController::applicationsRetrieved);
 
     connect(&livestreamer, &QProcess::started,
             this, &BigScreenController::processStarted);

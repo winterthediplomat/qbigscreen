@@ -32,7 +32,7 @@ def main(args):
     p = subprocess.Popen("steam")
     returncode = p.wait()
 
-    start_qjoypad_with_profile("mouse")
+    start_qjoypad_with_profile(None)
 
     sys.exit(100+returncode)
 
