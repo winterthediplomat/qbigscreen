@@ -187,6 +187,7 @@ void BigScreenController::btnX() {
     case TabSelection:
         updated = true;
         if(!model.selectedTab.isNone()) {
+            model.selectedListItem = Option<int>::None();
             this->executeTab(model.selectedTab.value());
         }
         break;
@@ -338,6 +339,7 @@ void BigScreenController::twitchListRetrieved(Result<QStringList, QString>& chan
 void BigScreenController::applicationsRetrieved(Result<QVector<ApplicationItem>, QString> &list)
 {
     model.debugText.append("\napplicationsRetrievedCalled");
+    internal.state = ListItemSelection;
     internal.applications = list.value();
 
     model.items.clear();
