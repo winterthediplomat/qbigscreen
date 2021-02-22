@@ -33,8 +33,9 @@ void BigScreenController::initialize() {
     connect(&net, &BigScreenNetwork::twitchListRetrieved,
             this, &BigScreenController::twitchListRetrieved);
 
-    connect(&livestreamer, SIGNAL(started()),
-            this, SLOT(processStarted()));
+    connect(&livestreamer, &QProcess::started,
+            this, &BigScreenController::processStarted);
+    // TODO(wha): how should I use the &QProcess::finished syntax in case of overloads?
     connect(&livestreamer, SIGNAL(finished(int, QProcess::ExitStatus)),
             this, SLOT(processFinished(int, QProcess::ExitStatus)));
 }
@@ -195,6 +196,9 @@ void BigScreenController::btnX() {
             case Twitch:
                 this->startTwitchStream();
                 break;
+            case Applications:
+                this->executeSelectedApplication();
+                break;
             default:
                 model.debugText.append("the selected tab is not handled yet");
                 break;
@@ -228,11 +232,14 @@ void BigScreenController::executeTab(BigScreenTab tab)
     switch(tab) {
     case Youtube:
     case Television:
-    case Applications:
         this->updateStatusBarText("not supported");
         break;
+    case Applications:
+        model.debugText.append("\nrequested applications");
+        this->net.requestApplications();
+        break;
     case Twitch:
-        model.debugText.append("requested twitch channels");
+        model.debugText.append("\nrequested twitch channels");
         this->net.requestTwitchWebsites();
         break;
     }
@@ -242,9 +249,45 @@ void BigScreenController::startTwitchStream() {
     auto currentIndex = model.selectedListItem.value();
     auto twitch_username = model.items.at(currentIndex);
 
-    QString global_version_path = "/opt/qbigscreen/launch-via-streamlink.py";
+    QString program = this->launcherScriptPath("launch-via-streamlink.py");
+    QStringList args;
+    args << "https://twitch.tv/" + twitch_username;
+    args << "720p";
+
+    model.statusBarText = "starting: " + program + " " + args.join(" ");
+    model.debugText.append("\nstarting: " + program + " " + args.join(" "));
+    model.showFullScreen = false;
+    model.freezeInterface = true;
+
+    livestreamer.start(program, args);
+}
+
+void BigScreenController::executeSelectedApplication()
+{
+    auto currentIndex = model.selectedListItem.value();
+    auto application = internal.applications.at(currentIndex);
+
+    auto app_launch_script = application.launcher_script;
+    QString program = this->launcherScriptPath(app_launch_script);
+    QStringList args;
+
+    model.statusBarText = "starting: " + program + " " + args.join(" ");
+    model.debugText.append("\nstarting: " + program + " " + args.join(" "));
+    model.showFullScreen = false;
+    model.freezeInterface = true;
+
+    livestreamer.start(program, args);
+}
+
+QString BigScreenController::launcherScriptPath(QString scriptName)
+{
+    QString GLOBAL_DEPLOY_PATH("/opt/qbigscreen/");
+    QString DEV_DEPLOY_PATH(QDir::homePath() + QString("/.config/qbigscreen/scripts/"));
+
+
+    QString global_version_path = GLOBAL_DEPLOY_PATH + scriptName;
     QFile global_version(global_version_path);
-    QString local_version_path = QDir::homePath() + QString("/.config/qbigscreen/scripts/launch-via-streamlink.py");
+    QString local_version_path = DEV_DEPLOY_PATH + scriptName;
     QFile local_version(local_version_path);
 
     QString program;
@@ -257,16 +300,8 @@ void BigScreenController::startTwitchStream() {
     else {
         assert(false && "how tf did you install this app?");
     }
-    QStringList args;
-    args << "https://twitch.tv/" + twitch_username;
-    args << "720p";
 
-    model.statusBarText = "starting: " + program + " " + args.join(" ");
-    model.debugText.append("\nstarting: " + program + " " + args.join(" "));
-    model.showFullScreen = false;
-    model.freezeInterface = true;
-
-    livestreamer.start(program, args);
+    return program;
 }
 
 void BigScreenController::processStarted()
@@ -295,6 +330,19 @@ void BigScreenController::twitchListRetrieved(Result<QStringList, QString>& chan
     model.debugText.append("twitchListRequested called");
     model.items = channels.value();
     internal.state = ListItemSelection;
+    emit modelUpdated(model);
+}
+
+void BigScreenController::applicationsRetrieved(Result<QVector<ApplicationItem>, QString> &list)
+{
+    model.debugText.append("\napplicationsRetrievedCalled");
+    internal.applications = list.value();
+
+    model.items.clear();
+    for(ApplicationItem ai: internal.applications) {
+        model.items.append(ai.name);
+    }
+
     emit modelUpdated(model);
 }
 

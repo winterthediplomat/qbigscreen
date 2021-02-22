@@ -33,6 +33,8 @@ else: unix:!android: target.path = $$[PREFIX]
 
 DISTFILES += \
     dev-support/install-scripts.sh \
+    scripts/launch-deezer.py \
+    scripts/launch-steam.py \
     scripts/launch-via-streamlink.py \
     scripts/start-mpv.sh
 

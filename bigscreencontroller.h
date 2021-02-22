@@ -38,6 +38,7 @@ private:
     struct InternalModel
     {
         InternalState state;
+        QVector<ApplicationItem> applications;
     };
 
     BigScreenModel model;
@@ -55,6 +56,10 @@ private:
 
     // process
     void startTwitchStream();
+    void executeSelectedApplication();
+
+    // process support (dev vs deployed)
+    QString launcherScriptPath(QString scriptName);
 
 private slots:
     void joypadUpDown(double value);
@@ -65,6 +70,7 @@ private slots:
     void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
     void twitchListRetrieved(Result<QStringList, QString>& channels);
+    void applicationsRetrieved(Result<QVector<ApplicationItem>, QString>& list);
 
 };
 

@@ -127,4 +127,7 @@ void MainWindow::modelUpdated(BigScreenModel& model) {
     this->ui->pb_twitch->setEnabled(!model.freezeInterface);
     this->ui->pb_youtube->setEnabled(!model.freezeInterface);
     this->ui->lst_stuff->setEnabled(!model.freezeInterface);
+
+    this->raise();
+    this->activateWindow();
 }

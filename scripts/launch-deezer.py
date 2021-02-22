@@ -3,8 +3,6 @@
 
 import subprocess
 import argparse
-import streamlink
-from pprint import pprint
 import sys
 import os
 import psutil
@@ -28,36 +26,19 @@ def start_qjoypad_with_profile(profile=None):
         qjoypad_p = subprocess.Popen("qjoypad {}".format(profile).split(" "))
 
 def main(args):
-    s = streamlink.Streamlink()
-    streams = s.streams(args.url)
-
-    if not streams:
-        sys.exit(1)
-
-    available_quality = list(streams.keys())
-    quality_to_request = "best" if args.prefsize not in available_quality else args.prefsize
-
-    # start qjoypad if available_quality
-    start_qjoypad_with_profile("mpv")
+    start_qjoypad_with_profile("mouse")
 
     # start mpv
-    mpv_script_to_use = "/opt/qbigscreen/start-mpv.sh"
-    if not os.path.exists(mpv_script_to_use):
-        mpv_script_to_use = os.path.expanduser("~/.config/qbigscreen/scripts/start-mpv.sh")
-
-    p = subprocess.Popen("streamlink --player {} {} {}".format(
-        mpv_script_to_use,
-        args.url,
-        quality_to_request).split(" "))
+    p = subprocess.Popen("deezer")
     returncode = p.wait()
 
-    start_qjoypad_with_profile("mouse")
+    # start_qjoypad_with_profile("mouse")
 
     sys.exit(100+returncode)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("url")
-    parser.add_argument("prefsize")
+    # parser.add_argument("url")
+    # parser.add_argument("prefsize")
 
     main(parser.parse_args())

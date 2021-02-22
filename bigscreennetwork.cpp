@@ -14,8 +14,17 @@ void BigScreenNetwork::requestTwitchWebsites()
     sl.append("j_blow");
     sl.append("gittre");
     sl.append("fredrin");
+    sl.append("liabellula");
+    sl.append("motokosu");
 
     auto res = Result<QStringList, QString>::Ok(sl);
 
     emit twitchListRetrieved(res);
+}
+
+void BigScreenNetwork::requestApplications()
+{
+   QVector<ApplicationItem> l;
+   l.append(ApplicationItem{ "Deezer", "launch-deezer.py", Option<QString>::None() });
+   l.append(ApplicationItem{ "Steam", "launch-steam.py", Option<QString>::None() });
 }
