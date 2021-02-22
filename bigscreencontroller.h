@@ -21,6 +21,7 @@ public slots:
     void joypadDown();
 
     void btnX();
+    void btnB();
 
     void tabClicked(BigScreenTab tab);
     void listItemClicked(size_t row);
@@ -67,6 +68,7 @@ private slots:
     void joypadUpDown(double value);
     void joypadLeftRight(double value);
     void buttonXChanged(bool pressed);
+    void buttonBChanged(bool pressed);
 
     void processStarted();
     void processFinished(int exitCode, QProcess::ExitStatus exitStatus);

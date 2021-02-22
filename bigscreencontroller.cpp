@@ -29,6 +29,8 @@ void BigScreenController::initialize() {
             this, SLOT(joypadUpDown(double)));
     connect(pad, SIGNAL(buttonXChanged(bool)),
             this, SLOT(buttonXChanged(bool)));
+    connect(pad, SIGNAL(buttonBChanged(bool)),
+            this, SLOT(buttonBChanged(bool)));
 
     connect(&net, &BigScreenNetwork::twitchListRetrieved,
             this, &BigScreenController::twitchListRetrieved);
@@ -48,8 +50,6 @@ void BigScreenController::updateStatusBarText(QString text) {
     model.statusBarText = text;
     emit modelUpdated(this->model);
 }
-
-
 
 void BigScreenController::joypadLeftRight(double value)
 {
@@ -75,6 +75,14 @@ void BigScreenController::buttonXChanged(bool pressed)
 {
     if(pressed) {
         this->btnX();
+    }
+}
+
+
+void BigScreenController::buttonBChanged(bool pressed)
+{
+    if(pressed) {
+        this->btnB();
     }
 }
 
@@ -219,6 +227,24 @@ void BigScreenController::btnX() {
         emit this->modelUpdated(this->model);
     }
 
+}
+
+void BigScreenController::btnB()
+{
+    bool updated = false;
+
+    switch(internal.state) {
+    case ApplicationRunning:
+    case TabSelection:
+        break;
+    case ListItemSelection:
+        internal.state = TabSelection;
+        model.selectedListItem = Option<int>::None();
+    }
+
+    if(updated) {
+        emit this->modelUpdated(this->model);
+    }
 }
 
 void BigScreenController::tabClicked(BigScreenTab tab)
