@@ -8,6 +8,37 @@ enum BigScreenTab {
     Applications
 };
 
+template <typename T>
+struct Option
+{
+private:
+    bool is_none;
+    T value_;
+
+public:
+    static Option<T> Some(T value) {
+        Option o;
+        o.is_none = false;
+        o.value_ = value;
+        return o;
+    }
+
+    static Option<T> None() {
+        Option o;
+        o.is_none = true;
+        return o;
+    }
+
+    bool isNone() {
+        return this->is_none;
+    }
+
+    T value() {
+        assert(!this->isNone() && "unwrapping a None");
+        return this->value_;
+    }
+};
+
 template <typename T, typename E>
 struct Result
 {
@@ -36,10 +67,12 @@ public:
     }
 
     T value() {
+        assert(!this->isError() && "unwrapping an Err value!");
         return value_;
     }
 
     E error() {
+        assert(this->isError() && "this Result is not an Err!");
         return error_;
     }
 };

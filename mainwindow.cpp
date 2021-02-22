@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QProcess>
 
-#include <QtGamepad/QGamepad>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,31 +11,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    connect(&net, SIGNAL(twitchListRetrieved(Result<QStringList, QString>&)),
-            this, SLOT(twitchListRetrieved(Result<QStringList, QString>&)));
-
     connect(this->ui->lst_stuff, SIGNAL(itemClicked(QListWidgetItem*)),
             this, SLOT(itemClicked(QListWidgetItem*)));
 
-    connect(&proc, SIGNAL(started()),
-            this, SLOT(processStarted()));
-    connect(&proc, SIGNAL(finished(int, QProcess::ExitStatus)),
-            this, SLOT(processFinished(int, QProcess::ExitStatus)));
+    connect(&controller, SIGNAL(modelUpdated(BigScreenModel&)),
+            this, SLOT(modelUpdated(BigScreenModel&)));
 
-    auto gamepads = QGamepadManager::instance()->connectedGamepads();
-    if(!gamepads.empty()) {
-        this->ui->pte_debug->appendPlainText("got a gamepad!");
-        this->pad = new QGamepad(*gamepads.begin(), this);
-    }
-    else {
-        this->ui->pte_debug->appendPlainText("no gamepads found");
-        this->pad = nullptr;
-    }
-
-    connect(pad, SIGNAL(axisLeftYChanged(double)),
-            this, SLOT(joypadUpDown(double)));
-    connect(pad, SIGNAL(buttonXChanged(bool)),
-            this, SLOT(buttonXChanged(bool)));
+    controller.initialize();
 }
 
 MainWindow::~MainWindow()
@@ -63,7 +44,7 @@ void MainWindow::markAsSelected(BigScreenTab tab) {
     switch(tab) {
     case Twitch: {
         colorizeAsSelected(this->ui->pb_twitch);
-        net.requestTwitchWebsites();
+        // net.requestTwitchWebsites();
         break;
     }
     case Youtube: {
@@ -83,90 +64,70 @@ void MainWindow::markAsSelected(BigScreenTab tab) {
 
 // slots
 void MainWindow::on_pb_twitch_clicked() {
-    this->markAsSelected(Twitch);
+    this->controller.tabClicked(Twitch);
 }
 void MainWindow::on_pb_apps_clicked() {
-    this->markAsSelected(Applications);
+    this->controller.tabClicked(Twitch);
 }
 void MainWindow::on_pb_tv_clicked() {
-    this->markAsSelected(Television);
+    this->controller.tabClicked(Twitch);
 }
 void MainWindow::on_pb_youtube_clicked() {
-    this->markAsSelected(Youtube);
+    this->controller.tabClicked(Twitch);
 }
 
-
-void MainWindow::twitchListRetrieved(Result<QStringList, QString> &list) {
-    if(!list.isError()) {
-        this->ui->lst_stuff->clear();
-        for(auto f: list.value()) {
-            this->ui->lst_stuff->addItem(f);
-        }
-    }
-}
-
-void MainWindow::itemClicked(QListWidgetItem* item)
+void MainWindow::itemClicked(QListWidgetItem*)
 {
-    if(currentTab == Twitch) {
-        QString program = "streamlink";
-        QStringList args;
-        args << "--player";
-        args << "mpv";
-        args << "https://twitch.tv/" + item->text();
-        args << "720p";
-
-        this->ui->lst_stuff->setEnabled(false);
-        this->ui->pb_apps->setEnabled(false);
-        this->ui->pb_tv->setEnabled(false);
-        this->ui->pb_twitch->setEnabled(false);
-        this->ui->pb_youtube->setEnabled(false);
-
-        this->ui->statusbar->showMessage("starting: " + program + " " + args.join(" "));
-
-        proc.start(program, args);
-    }
+    auto row = this->ui->lst_stuff->currentRow();
+    this->controller.listItemClicked(row);
 }
 
-void MainWindow::processStarted()
-{
-    this->ui->pte_debug->appendPlainText("process started");
-}
+void MainWindow::modelUpdated(BigScreenModel& model) {
 
-void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
-{
-    this->ui->lst_stuff->setEnabled(true);
-    this->ui->pb_apps->setEnabled(true);
-    this->ui->pb_tv->setEnabled(true);
-    this->ui->pb_twitch->setEnabled(true);
-    this->ui->pb_youtube->setEnabled(true);
-    this->ui->pte_debug->appendPlainText("process finished - (" + QString::number(exitCode) + ", status: " + QString::number(exitStatus) + ")");
+    // update tab
+    if(model.selectedTab.isNone()) {
+        colorizeAsNotSelected(this->ui->pb_apps);
+        colorizeAsNotSelected(this->ui->pb_tv);
+        colorizeAsNotSelected(this->ui->pb_twitch);
+        colorizeAsNotSelected(this->ui->pb_youtube);
+    }
+    else {
+        this->markAsSelected(model.selectedTab.value());
+    }
 
-    if(currentTab == Twitch) {
-       if(exitStatus == QProcess::CrashExit) {
-           this->ui->statusbar->showMessage("[twitch] the stream is not active");
-       }
-       else {
-           this->ui->statusbar->showMessage("[twitch] you stopped watching this stream");
-       }
-    }
-}
+    // update list
+    this->ui->lst_stuff->clear();
+    this->ui->lst_stuff->addItems(model.items);
 
-void MainWindow::joypadUpDown(double value)
-{
-    auto currentRow = this->ui->lst_stuff->currentRow();
-//    this->ui->pte_debug->appendPlainText("[joypadUpDown] " + QString::number(value));
-    if(value == -1) {
-        this->ui->lst_stuff->setCurrentRow(std::max(currentRow-1, 0));
+    // update list selection
+    if(model.selectedListItem.isNone()) {
     }
-    else if(value == 1) {
-        this->ui->lst_stuff->setCurrentRow(std::min(currentRow+1, this->ui->lst_stuff->count()));
+    else {
+       this->ui->lst_stuff->setCurrentRow(model.selectedListItem.value());
     }
-}
 
-void MainWindow::buttonXChanged(bool pressed)
-{
-    if(pressed) {
-        auto currentItem = this->ui->lst_stuff->currentItem();
-        this->itemClicked(currentItem);
+    // update status bar
+    this->statusBar()->showMessage(model.statusBarText);
+
+    // update debug view
+    this->ui->pte_debug->clear();
+    this->ui->pte_debug->appendPlainText(model.debugText);
+
+    // fullscreen
+    if(model.showFullScreen) {
+        this->showMaximized();
     }
+    else {
+        this->showNormal();
+    }
+
+    // freeze interface if requested
+    this->ui->pb_apps->setEnabled(!model.freezeInterface);
+    this->ui->pb_tv->setEnabled(!model.freezeInterface);
+    this->ui->pb_twitch->setEnabled(!model.freezeInterface);
+    this->ui->pb_youtube->setEnabled(!model.freezeInterface);
+    this->ui->lst_stuff->setEnabled(!model.freezeInterface);
+
+    this->raise();
+    this->activateWindow();
 }

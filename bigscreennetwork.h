@@ -5,6 +5,13 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include "bigscreen_defines.hpp"
 
+struct ApplicationItem
+{
+    QString name;
+    QString launcher_script;
+    Option<QString> qjoypad_profile;
+};
+
 class BigScreenNetwork: public QObject
 {
    Q_OBJECT
@@ -12,9 +19,13 @@ class BigScreenNetwork: public QObject
 public:
     BigScreenNetwork();
     void requestTwitchWebsites();
+    void requestApplications();
+    void requestTvChannels();
 
 signals:
     void twitchListRetrieved(Result<QStringList, QString>& list);
+    void applicationsRetrieved(Result<QVector<ApplicationItem>, QString>& list);
+    void tvChannelsRetrieved(Result<QStringList, QString>& list);
 
 private:
     QNetworkAccessManager qnam;
