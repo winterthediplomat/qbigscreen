@@ -31,7 +31,7 @@ def main(args):
     # start qjoypad if available_quality
     start_qjoypad_with_profile("mpv")
 
-    p = subprocess.Popen("mpv --force-window=yes --window-maximized=yes cdda:///dev/sr0").split(" "))
+    p = subprocess.Popen("mpv --force-window=yes --window-maximized=yes cdda:///dev/sr0".split(" "))
     returncode = p.wait()
 
     start_qjoypad_with_profile(None)
