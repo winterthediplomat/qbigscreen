@@ -33,10 +33,12 @@ else: unix:!android: target.path = $$[PREFIX]
 
 DISTFILES += \
     dev-support/install-scripts.sh \
+    layouts/xbox360.gamecontroller.amgp \
     scripts/launch-deezer.py \
     scripts/launch-mpv-cdda.py \
     scripts/launch-steam.py \
     scripts/launch-via-streamlink.py \
+    scripts/start-antimicrox.py \
     scripts/start-mpv.sh
 
 RESOURCES +=
