@@ -27,6 +27,7 @@ void BigScreenNetwork::requestApplications()
    QVector<ApplicationItem> l;
    l.append(ApplicationItem{ "Deezer", "launch-deezer.py", Option<QString>::None() });
    l.append(ApplicationItem{ "Steam", "launch-steam.py", Option<QString>::None() });
+   l.append(ApplicationItem{ "Listen to CD", "launch-mpv-cdda.py", Option<QString>::None() });
 
    auto res = Result<QVector<ApplicationItem>, QString>::Ok(l);
 
