@@ -11,7 +11,7 @@ import psutil
 
 def start_qjoypad_with_profile(profile="none"):
     try:
-        subprocess.Popen(["/opt/qbigscreen/launch-antimicrox.py", profile])
+        subprocess.Popen(["/opt/qbigscreen/start-antimicrox.py", profile])
     except FileNotFoundError:
         subprocess.Popen([os.path.expanduser("~/.config/qbigscreen/scripts/start-antimicrox.py"), profile])
 
