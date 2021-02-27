@@ -9,7 +9,7 @@ def main():
     if maybe_qbigscreen:
         subprocess.call(["/opt/qbigscreen/activate-window-of-current-instance.sh", p.pid()])
     else:
-        subprocess.Popen(["/usr/bin/qbigscreen"])
+        subprocess.Popen(["/usr/local/bin/qbigscreen"])
 
 if __name__ == "__main__":
     main()
