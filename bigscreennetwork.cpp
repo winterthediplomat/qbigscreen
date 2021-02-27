@@ -28,6 +28,8 @@ void BigScreenNetwork::requestApplications()
    l.append(ApplicationItem{ "Deezer", "launch-deezer.py", Option<QString>::None() });
    l.append(ApplicationItem{ "Steam", "launch-steam.py", Option<QString>::None() });
    l.append(ApplicationItem{ "Listen to CD", "launch-mpv-cdda.py", Option<QString>::None() });
+   l.append(ApplicationItem{ "Use PC", "launch-use-pc.py", Option<QString>::None() });
+   l.append(ApplicationItem{ "Relaunch QBigScreen", "launch-restart-qbigscreen.py", Option<QString>::None() });
 
    auto res = Result<QVector<ApplicationItem>, QString>::Ok(l);
 

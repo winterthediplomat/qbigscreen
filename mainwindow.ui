@@ -84,6 +84,18 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="pb_timers">
+         <property name="font">
+          <font>
+           <pointsize>42</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Timers</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>

@@ -5,7 +5,8 @@ enum BigScreenTab {
     Twitch = 0,
     Youtube,
     Television,
-    Applications
+    Applications /*,
+    Timers*/
 };
 
 template <typename T>
