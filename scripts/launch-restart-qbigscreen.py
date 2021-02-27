@@ -15,7 +15,7 @@ def main():
         if maybe_p in alive:
             maybe_p.kill()
 
-    subprocess.Popen("/usr/bin/qbigscreen")
+    subprocess.Popen("/usr/local/bin/qbigscreen")
 
 if __name__ == "__main__":
     main()
