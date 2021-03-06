@@ -33,7 +33,10 @@ else: unix:!android: target.path = $$[PREFIX]
 
 DISTFILES += \
     dev-support/install-scripts.sh \
+    dev-support/test-lockfile-scripts.sh \
     scripts/activate-window-of-current-instance.sh \
+    scripts/create-lockfile.sh \
+    scripts/delete-lockfile.sh \
     scripts/launch-deezer.py \
     scripts/launch-mpv-cdda.py \
     scripts/launch-restart-qbigscreen.py \
