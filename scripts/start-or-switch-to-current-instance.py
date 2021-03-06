@@ -25,16 +25,16 @@ def find_lockfile(pattern):
         return None
 
 def process_name(fpath):
-    with open(fpath) as src:
+    with open(os.path.join("/tmp", fpath)) as src:
         return src.read().strip()
 
 def create_visible_lockfile():
-    now = (datetime.datetime.now().timestamp())
+    now = str(int(datetime.datetime.now().timestamp()))
     with open("/tmp/qbigscreen-visible-"+now, "w") as dst:
-        dst.write(str(now))
+        dst.write(now)
 
 def delete_visible_lockfile(fpath):
-    os.remove(fpath)
+    os.remove(os.path.join("/tmp", fpath))
 
 def main():
 
